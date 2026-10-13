@@ -71,6 +71,7 @@ kubectl apply -f service.yml
 
 # Verify Pods Status
 kubectl get pods
+```
 
 👤 Author
 Adham Gamal
