@@ -73,11 +73,18 @@ kubectl apply -f service.yml
 kubectl get pods
 ```
 
-👤 Author
-Adham Gamal
+---
 
-Role: Java Backend Developer & DevOps Engineer
+## 👤 Author & Connect
 
-GitHub: @adhamgamal22
+<div align="center">
 
-LinkedIn: Adham Gamal
+### **Adham Gamal**
+**Java Backend Developer & DevOps Engineer**
+
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/adhamgamal74/)
+
+---
+*Building scalable backend systems & automated CI/CD cloud solutions.*
+
+</div>
