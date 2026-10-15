@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -7,12 +8,11 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Build & Test') {
             steps {
-                sh './mvn -B clean package -DskipTests'
+                sh 'mvn -B clean verify'
             }
         }
-
 
         stage('Docker Build') {
             when {
@@ -21,7 +21,8 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} . '''
+                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} .
+                '''
             }
         }
 
@@ -69,6 +70,16 @@ pipeline {
                       ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline succeeded for ${env.BRANCH_NAME}"
+        }
+
+        failure {
+            echo "Pipeline failed for ${env.BRANCH_NAME}"
         }
     }
 }
