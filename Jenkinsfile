@@ -52,12 +52,20 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh '''
-                    sed -i "s|image:.*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|g" deploy.yml
-                    kubectl apply --validate=false -f deploy.yml
-                    kubectl apply --validate=false -f service.yml
-                    kubectl rollout status deployment/demo-workshop || true
-                '''
+         sh '''
+    set -e
+
+    sed -i \
+      "s|image:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" \
+      deploy.yml
+
+    kubectl apply -f deploy.yml
+    kubectl apply -f service.yml
+
+    kubectl rollout status \
+      deployment/my-app1-deployment \
+      --timeout=120s
+'''
             }
         }
     }
