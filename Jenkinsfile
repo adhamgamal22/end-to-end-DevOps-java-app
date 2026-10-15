@@ -5,8 +5,9 @@ pipeline {
     environment {
         IMAGE_NAME = 'adhamgamal74/java-app'
     }
+    
 
-
+}
         stage('Docker Build') {
             when {
                 branch 'main'
