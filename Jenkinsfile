@@ -1,13 +1,11 @@
-
 pipeline {
     agent any
 
     environment {
         IMAGE_NAME = 'adhamgamal74/java-app'
     }
-    
 
-}
+    stages {
         stage('Docker Build') {
             when {
                 branch 'main'
