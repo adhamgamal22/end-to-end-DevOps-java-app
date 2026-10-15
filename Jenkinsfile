@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} .                '''
+                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} . '''
             }
         }
 
