@@ -11,7 +11,7 @@ An end-to-end DevOps project featuring a Java Spring Boot application automated 
 * **CI/CD Automation:** Jenkins (Multibranch Pipeline)
 * **Code Quality:** SonarQube
 * **Containerization:** Docker & Docker Hub
-* **Orchestration:** Kubernetes (Deployments, Pods, Services)
+* **Orchestration:** Kubernetes (Deployments, Pods, Services)      
 * **Package Management:** Helm
 * **Version Control:** Git & GitHub
 
