@@ -6,14 +6,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Build') {
-            steps {
-                sh './mvnw -B clean package -DskipTests'
-            }
-        }
-
-
         stage('Docker Build') {
             when {
                 branch 'main'
@@ -21,7 +13,8 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} . '''
+                      -t ${IMAGE_NAME}:v1.0-${BUILD_NUMBER} .
+                '''
             }
         }
 
@@ -69,6 +62,16 @@ pipeline {
                       ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline succeeded for ${env.BRANCH_NAME}"
+        }
+
+        failure {
+            echo "Pipeline failed for ${env.BRANCH_NAME}"
         }
     }
 }
