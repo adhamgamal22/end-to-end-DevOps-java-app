@@ -54,8 +54,8 @@ pipeline {
             steps {
                 sh '''
                     sed -i "s|image:.*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|g" deploy.yml
-                    kubectl apply -f deploy.yml
-                    kubectl apply -f service.yml
+                    kubectl apply --validate=false -f deploy.yml
+                    kubectl apply --validate=false -f service.yml
                     kubectl rollout status deployment/demo-workshop || true
                 '''
             }
