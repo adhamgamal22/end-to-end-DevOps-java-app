@@ -6,7 +6,7 @@ An end-to-end DevOps project featuring a Java Spring Boot application automated 
 ---
 
 ## 🛠️ Tech Stack & Tools
-
+    
 * **Application:** Java 17 / Spring Boot, Maven
 * **CI/CD Automation:** Jenkins (Multibranch Pipeline)
 * **Code Quality:** SonarQube

@@ -68,4 +68,14 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            echo "Pipeline succeeded for ${env.BRANCH_NAME}"
+        }
+
+        failure {
+            echo "Pipeline failed for ${env.BRANCH_NAME}"
+        }
+    }
 }
