@@ -5,24 +5,6 @@ pipeline {
         IMAGE_NAME = 'adhamgamal74/java-app'
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw -B clean package'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh './mvnw -B test'
-            }
         }
 
         stage('Docker Build') {
