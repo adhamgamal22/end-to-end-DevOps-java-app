@@ -47,18 +47,24 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh '''
-                    sed -i \
-                      "s|image: .*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|" \
-                      deploy.yml
+                withCredentials([
+                    file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')
+                ]) {
+                    sh '''
+                        kubectl cluster-info
 
-                    kubectl apply --validate=false -f deploy.yml
-                    kubectl apply --validate=false -f service.yml
+                        sed -i \
+                          "s|image: .*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|" \
+                          deploy.yml
 
-                    kubectl rollout status \
-                      deployment/my-app1-deployment \
-                      --timeout=120s
-                '''
+                        kubectl apply -f deploy.yml
+                        kubectl apply -f service.yml
+
+                        kubectl rollout status \
+                          deployment/my-app1-deployment \
+                          --timeout=120s
+                    '''
+                }
             }
         }
     }
