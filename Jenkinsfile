@@ -47,19 +47,16 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             when {
                 branch 'main'
             }
             steps {
                 sh '''
-                    docker rm -f my-app || true
-
-                    docker run -d \
-                      --name my-app \
-                      --restart unless-stopped \
-                      -p 8082:8080 \
-                      ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}
+                    sed -i "s|image:.*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|g" deploy.yml
+                    kubectl apply -f deploy.yml
+                    kubectl apply -f service.yml
+                    kubectl rollout status deployment/demo-workshop || true
                 '''
             }
         }
