@@ -1,9 +1,10 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'adhamgamal74/java-app'
-    }
+   environment {
+    IMAGE_NAME = 'adhamgamal74/java-app'
+    IMAGE_TAG = "v1.0-${BUILD_NUMBER}"
+}
 
     stages {
         stage('Docker Build') {
@@ -52,15 +53,19 @@ pipeline {
                 branch 'main'
             }
             steps {
-         sh '''
+     sh '''
     set -e
 
+    echo "Deploying image: ${IMAGE_NAME}:${IMAGE_TAG}"
+
     sed -i \
-      "s|image:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" \
+      "s|^[[:space:]]*image:.*|          image: ${IMAGE_NAME}:${IMAGE_TAG}|" \
       deploy.yml
 
-    kubectl apply -f deploy.yml
-    kubectl apply -f service.yml
+    cat deploy.yml
+
+    kubectl apply --validate=false -f deploy.yml
+    kubectl apply --validate=false -f service.yml
 
     kubectl rollout status \
       deployment/my-app1-deployment \
