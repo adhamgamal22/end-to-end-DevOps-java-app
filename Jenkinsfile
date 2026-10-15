@@ -1,12 +1,30 @@
 pipeline {
     agent any
 
-   environment {
-    IMAGE_NAME = 'adhamgamal74/java-app'
-    IMAGE_TAG = "v1.0-${BUILD_NUMBER}"
-}
+    environment {
+        IMAGE_NAME = 'adhamgamal74/java-app'
+    }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'chmod +x mvnw'
+                sh './mvnw -B clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './mvnw -B test'
+            }
+        }
+
         stage('Docker Build') {
             when {
                 branch 'main'
@@ -19,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Docker Hub Push') {
+        stage('Docker Push') {
             when {
                 branch 'main'
             }
@@ -32,15 +50,10 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        set +x
-
                         echo "$DOCKER_PASS" |
-                          docker login \
-                          -u "$DOCKER_USER" \
-                          --password-stdin
+                          docker login -u "$DOCKER_USER" --password-stdin
 
-                        docker push \
-                          ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}
+                        docker push ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}
 
                         docker logout
                     '''
@@ -53,35 +66,19 @@ pipeline {
                 branch 'main'
             }
             steps {
-     sh '''
-    set -e
+                sh '''
+                    sed -i \
+                      "s|image: .*|image: ${IMAGE_NAME}:v1.0-${BUILD_NUMBER}|" \
+                      deploy.yml
 
-    echo "Deploying image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                    kubectl apply -f deploy.yml
+                    kubectl apply -f service.yml
 
-    sed -i \
-      "s|^[[:space:]]*image:.*|          image: ${IMAGE_NAME}:${IMAGE_TAG}|" \
-      deploy.yml
-
-    cat deploy.yml
-
-    kubectl apply --validate=false -f deploy.yml
-    kubectl apply --validate=false -f service.yml
-
-    kubectl rollout status \
-      deployment/my-app1-deployment \
-      --timeout=120s
-'''
+                    kubectl rollout status \
+                      deployment/my-app1-deployment \
+                      --timeout=120s
+                '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Pipeline succeeded for ${env.BRANCH_NAME}"
-        }
-
-        failure {
-            echo "Pipeline failed for ${env.BRANCH_NAME}"
         }
     }
 }
