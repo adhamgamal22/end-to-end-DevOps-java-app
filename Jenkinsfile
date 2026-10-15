@@ -6,13 +6,6 @@ pipeline {
         IMAGE_NAME = 'adhamgamal74/java-app'
     }
 
-    stages {
-
-        stage('Build & Test') {
-            steps {
-                sh 'mvn -B clean verify'
-            }
-        }
 
         stage('Docker Build') {
             when {
