@@ -1,6 +1,8 @@
 # 🚀 End-to-End DevOps Java Application
 
-A Java 17 / Spring Boot application delivered through a fully automated **Jenkins Multibranch CI/CD pipeline**: built and tested with Maven,containerized with Docker, and deployed to Kubernetes.
+A CI/CD pipeline built with **Jenkins (Multibranch)** that packages a Java 17 / Spring Boot application into a Docker image using a multi-stage build, pushes it to Docker Hub, and deploys it to Kubernetes.
+
+> **Note:** The application code is an open-source project ([original repo](ORIGINAL_REPO_LINK), credit to its authors). My work is the DevOps layer: `Dockerfile`, `Jenkinsfile`, `deploy.yml`, and `service.yml`.
 
 ## 🛠️ Tech Stack
 
@@ -8,48 +10,38 @@ A Java 17 / Spring Boot application delivered through a fully automated **Jenkin
 |---|---|
 | Application | Java 17, Spring Boot, Maven |
 | CI/CD | Jenkins (Multibranch Pipeline) |
-| Containerization | Docker, Docker Hub |
-| Orchestration | Kubernetes (Deployments, Pods, Services) |
+| Containerization | Docker (multi-stage build), Docker Hub |
+| Orchestration | Kubernetes (Deployment, NodePort Service) |
 | Version Control | Git, GitHub |
 
-## 🏗️ Architecture & Pipeline Flow
+## 🏗️ Pipeline Flow
 
 ```mermaid
 flowchart TD
-    A[Git Push: main / test] --> B[Jenkins Multibranch Pipeline]
-    B --> C[1. Checkout]
-    C --> D[2. Build & Test - Maven]
-    E --> F[4. Docker Build & Push - Docker Hub]
-    F --> G[5. Deploy to Kubernetes]
+    A[Git Push to main] --> B[Jenkins Multibranch Pipeline]
+    B --> C[Docker Build - multi-stage Maven build]
+    C --> D[Push image to Docker Hub]
+    D --> E[Deploy to Kubernetes]
+    E --> F[Verify rollout status]
 ```
 
-Images are tagged with the **build number** (e.g. `adhamgamal74/java-app:v1.0-${BUILD_NUMBER}`) so every deployment is traceable and rollbacks are straightforward.
-
-## 🌿 Branching Strategy
-
-| Branch | Purpose | Deployment Target |
-|---|---|---|
-| `main` | Production-ready code | Production namespace |
-| `test` | Staging & feature testing | Staging namespace |
+Images are tagged `v1.0-<BUILD_NUMBER>` (e.g. `adhamgamal74/java-app:v1.0-12`) so every deployment is traceable. The build, push, and deploy stages run on the `main` branch.
 
 ## ☸️ Kubernetes Configuration
 
-- **Deployment:** 4 replicas for load distribution and zero-downtime rolling updates.
-- **Service:** `<NodePort>` exposing the app on port `8082`.
-- **Namespaces:** separate namespaces per branch (`production`, `staging`).
+- **Deployment:** `my-app1-deployment` with 4 replicas and rolling updates.
+- **Service:** NodePort exposing the app on port `8082`.
 
 ## 🚦 Quick Start
 
 ### Prerequisites
-- Java 17+ and Maven
 - Docker Desktop / Engine
 - Minikube or any Kubernetes cluster with `kubectl` configured
-- Helm 3 (optional)
 
 ### Run locally with Docker
 ```bash
-docker build -t adhamgamal74/java-app:v1.0-${BUILD_NUMBER} .
-docker run -d -p 8082:8080 adhamgamal74/java-app:v1.0-${BUILD_NUMBER}
+docker build -t adhamgamal74/java-app:local .
+docker run -d -p 8082:8082 adhamgamal74/java-app:local
 ```
 The app is available at http://localhost:8082.
 
@@ -66,15 +58,17 @@ On Minikube, open the service with:
 minikube service <service-name>
 ```
 
-
 ## ⚙️ CI/CD Setup
 
-Configure these in Jenkins before running the pipeline:
+Configure these credentials in Jenkins before running the pipeline:
 
 | Credential ID | Type | Used for |
 |---|---|---|
-| `dockerhub-creds` | Username/Password | Pushing images to Docker Hub |
+| `dockerhub` | Username/Password | Pushing images to Docker Hub |
+| `kubeconfig` | Secret file | `kubectl` access to the cluster |
+
+
 
 ## 👤 Author
 
-**Adham Gamal**:  [LinkedIn](https://linkedin.com/in/adhamgamal74)
+**Adham Gamal**: [LinkedIn](https://linkedin.com/in/adhamgamal74)
