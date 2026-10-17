@@ -7,7 +7,6 @@ spec:
   selector:
     app: my-app
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8081
-      nodePort: 30030
+    - port: 8082
+      targetPort: 8082
+      nodePort: 30081

@@ -1,91 +1,73 @@
  
  # 🚀 End-to-End DevOps Java Application
 
-An end-to-end DevOps project featuring a Java Spring Boot application automated with a **Multibranch CI/CD Pipeline** using **Jenkins**, containerized with **Docker**, and deployed on **Kubernetes (k8s)**.
+> **Note:** The application code is an open-source project ([original repo](ORIGINAL_REPO_LINK), credit to its authors). My work is the DevOps layer: `Dockerfile`, `Jenkinsfile`, `deploy.yml`, and `service.yml`.
 
----
+## 🛠️ Tech Stack
 
-## 🛠️ Tech Stack & Tools
+| Area | Tools |
+|---|---|
+| Application | Java 17, Spring Boot, Maven |
+| CI/CD | Jenkins (Multibranch Pipeline) |
+| Containerization | Docker (multi-stage build), Docker Hub |
+| Orchestration | Kubernetes (Deployment, NodePort Service) |
+| Version Control | Git, GitHub |
 
-* **Application:** Java 17 / Spring Boot, Maven
-* **CI/CD Automation:** Jenkins (Multibranch Pipeline)
-* **Code Quality:** SonarQube
-* **Containerization:** Docker & Docker Hub
-* **Orchestration:** Kubernetes (Deployments, Pods, Services)      
-* **Package Management:** Helm
-* **Version Control:** Git & GitHub
+## 🏗️ Pipeline Flow
 
----
-
-## 🏗️ Architecture & Pipeline Flow
-
-[ Git Push (main/test) ]
-│
-▼
-[ Jenkins Multibranch Pipeline ]
-│
-├──► 1. Checkout Code
-├──► 2. Build & Test (Maven)
-├──► 3. Code Quality Scan (SonarQube)
-├──► 4. Docker Build & Push (Docker Hub)
-└──► 5. Kubernetes Deployment (kubectl / Helm)
-
-
----
-
-## 🚀 Branching Strategy
-
-| Branch | Purpose | Deployment Target |
-| :--- | :--- | :--- |
-| `main` | Production-ready code | Default / Production K8s Namespace |
-| `test` | Staging & Testing features | Staging / Test K8s Namespace |
-
----
-
-## 📋 Kubernetes Configuration
-
-The application runs inside a Kubernetes cluster with high availability:
-* **Deployment:** 4 Replicas for resilience and load handling.
-* **Service:** Exposes the application pods internally and externally.
-
----
-
-## 🚦 Quick Start (Local Setup)
-
-### Prerequisites
-* Java 17+ & Maven
-* Docker Desktop / Engine
-* Minikube or Kubernetes cluster (`kubectl` configured)
-
-### Run Locally with Docker
-```bash
-# Build Docker image
-docker build -t adhamgamal/end-to-end-devops-java-app:latest .
-
-# Run Container
-docker run -d -p 8080:8080 adhamgamal/end-to-end-devops-java-app:latest
-Deploy to Kubernetes
-Bash
-# Apply Kubernetes Manifests
-kubectl apply -f deploy.yml
-kubectl apply -f service.yml
-
-# Verify Pods Status
-kubectl get pods
+```mermaid
+flowchart TD
+    A[Git Push to main] --> B[Jenkins Multibranch Pipeline]
+    B --> C[Docker Build - multi-stage Maven build]
+    C --> D[Push image to Docker Hub]
+    D --> E[Deploy to Kubernetes]
+    E --> F[Verify rollout status]
 ```
 
----
+Images are tagged `v1.0-<BUILD_NUMBER>` (e.g. `adhamgamal74/java-app:v1.0-12`) so every deployment is traceable. The build, push, and deploy stages run on the `main` branch.
 
-## 👤 Author & Connect
+## ☸️ Kubernetes Configuration
 
-<div align="center">
+- **Deployment:** `my-app1-deployment` with 4 replicas and rolling updates.
+- **Service:** NodePort exposing the app on port `8082`.
 
-### **Adham Gamal**
-**Java Backend Developer & DevOps Engineer**
+## 🚦 Quick Start
 
-  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/adhamgamal74/)
+### Prerequisites
+- Docker Desktop / Engine
+- Minikube or any Kubernetes cluster with `kubectl` configured
 
----
-*Building scalable backend systems & automated CI/CD cloud solutions.*
+### Run locally with Docker
+```bash
+docker build -t adhamgamal74/java-app:local .
+docker run -d -p 8082:8082 adhamgamal74/java-app:local
+```
+The app is available at http://localhost:8082.
 
-</div>
+### Deploy to Kubernetes
+```bash
+kubectl apply -f deploy.yml
+kubectl apply -f service.yml
+kubectl get pods
+kubectl get svc
+```
+
+On Minikube, open the service with:
+```bash
+minikube service <service-name>
+```
+
+## ⚙️ CI/CD Setup
+
+Configure these credentials in Jenkins before running the pipeline:
+
+| Credential ID | Type | Used for |
+|---|---|---|
+| `dockerhub` | Username/Password | Pushing images to Docker Hub |
+| `kubeconfig` | Secret file | `kubectl` access to the cluster |
+
+
+
+## 👤 Author
+
+**Adham Gamal**: [LinkedIn](https://linkedin.com/in/adhamgamal74)
