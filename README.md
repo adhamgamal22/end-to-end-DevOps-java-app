@@ -1,6 +1,5 @@
-# 🚀 End-to-End DevOps Java Application
-
-A CI/CD pipeline built with **Jenkins (Multibranch)** that packages a Java 17 / Spring Boot application into a Docker image using a multi-stage build, pushes it to Docker Hub, and deploys it to Kubernetes.
+ 
+ # 🚀 End-to-End DevOps Java Application
 
 > **Note:** The application code is an open-source project ([original repo](ORIGINAL_REPO_LINK), credit to its authors). My work is the DevOps layer: `Dockerfile`, `Jenkinsfile`, `deploy.yml`, and `service.yml`.
 
